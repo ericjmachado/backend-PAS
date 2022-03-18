@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from core.helpers import generate_base64_token
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -37,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -123,3 +127,13 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+URL_UFG_API = 'https://data.api.ufg.br'
+
+CHAVE_API = '58b7FrdIPFv1afUN3ill6bfdNyIa'
+
+SENHA_API = "fpll0U5vqAVPw8p2mRJ6xepubIAa"
+
+BASIC_TOKEN = generate_base64_token(CHAVE_API, SENHA_API)
+
+BEARER_TOKEN = ""

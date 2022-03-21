@@ -137,3 +137,4 @@ SENHA_API = "fpll0U5vqAVPw8p2mRJ6xepubIAa"
 BASIC_TOKEN = generate_base64_token(CHAVE_API, SENHA_API)
 
 BEARER_TOKEN = ""
+BEARER_REFRESH_AT = None

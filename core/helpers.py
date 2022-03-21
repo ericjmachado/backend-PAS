@@ -1,6 +1,7 @@
 import base64
 from django.conf import settings
 import requests
+from django.utils import timezone
 
 
 def generate_base64_token(key, password):
@@ -17,3 +18,19 @@ def get_bearer_token():
     )
     token = response.json().get("access_token")
     return f"Bearer {token}"
+
+
+def get_bearer_token_from_updated():
+    def _default_setup():
+        settings.BEARER_TOKEN = get_bearer_token()
+        settings.BEARER_REFRESH_AT = timezone.now()
+        return settings.BEARER_TOKEN
+
+    refreshed_at = settings.BEARER_REFRESH_AT
+    if refreshed_at is not None:
+        if (timezone.now() - refreshed_at).seconds > 3600:
+            return _default_setup()
+        else:
+            return settings.BEARER_TOKEN
+    else:
+        return _default_setup()

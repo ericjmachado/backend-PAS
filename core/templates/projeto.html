@@ -1,21 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h4>
+  <h4 style="margin-bottom: 1rem">
     Dados de projetos UFG
   </h4>
   <div class="row">
-    <div class="accordion" id="accordions">
+    <div class="col-md-6">
+      <select class="form-select" id="tipo">
+        <option selected></option>
+        {% for tipo in tipos_projeto %}
+          <option value="{{ tipo }}">{{ tipo }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-6">
+      <select class="form-select" id="unidade">
+        <option selected></option>
+        {% for unidade in unidades_projeto %}
+          <option value="{{ unidade }}">{{ unidade }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="accordion" id="accordions" style="margin-top: 2rem">
       <div class="accordion" id="accordionExample">
         {% for projeto in projetos %}
           <div class="accordion-item">
             <p class="accordion-header" id="P{{ projeto.idProjeto }}">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#I{{ forloop.counter0 }}"
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#I{{ forloop.counter0 }}"
                       aria-expanded="true" aria-controls="I{{ forloop.counter0 }}">
                 <b>{{ projeto.tipo_projeto }}:</b> &nbsp;{{ projeto.titulo_projeto }}
               </button>
             </p>
-            <div id="I{{ forloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="P{{ projeto.idProjeto }}"
+            <div id="I{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                 aria-labelledby="P{{ projeto.idProjeto }}"
                  data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p>
@@ -25,7 +43,7 @@
                   Coordenador: <b>{{ projeto.coordenacao_projeto }}</b>
                 </p>
                 <p>
-                  Resumo: {{ projeto.resumo_projeto }} <br />
+                  Resumo: {{ projeto.resumo_projeto }} <br/>
                 </p>
               </div>
             </div>
@@ -89,27 +107,45 @@
     </div>
   </nav>
   <script>
-    $(document).ready(function () {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
-      const limit_el = $('#limit')
+      $(document).ready(function () {
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          const params = Object.fromEntries(urlSearchParams.entries());
+          const limit_el = $('#limit')
+          const unidade_el = $('#unidade')
+          const tipo_el = $('#tipo')
 
-      if (params.limit) {
-        limit_el.val(params.limit)
-      } else {
-        limit_el.val(50)
-      }
+          if (params.limit) {
+              limit_el.val(params.limit)
+          } else {
+              limit_el.val(50)
+          }
+          if (params.unidade) {
+              unidade_el.val(params.unidade)
+          }
 
-      limit_el.on('change', e => {
-        urlSearchParams.set("limit", e.target.value)
-        window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
-      })
+          if (params.tipo) {
+              tipo_el.val(params.tipo)
+          }
 
-      $(".page-link").on('click', e => {
-          urlSearchParams.set("page", e.currentTarget.dataset.page)
-          window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
-      })
-    });
+          limit_el.on('change', e => {
+              urlSearchParams.set("limit", e.target.value)
+              window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+          })
+
+          $(".page-link").on('click', e => {
+              urlSearchParams.set("page", e.currentTarget.dataset.page)
+              window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+          })
+
+          unidade_el.on('change', e => {
+              urlSearchParams.set("unidade", e.currentTarget.value)
+              window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+          })
+          tipo_el.on('change', e => {
+              urlSearchParams.set("tipo", e.currentTarget.value)
+              window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+          })
+      });
   </script>
 {% endblock %}
 

@@ -24,8 +24,10 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      <a class="nav-link" href="/">Home</a>
-      <a class="nav-link" href="/">Plano</a>
+      {% url 'home' as home_url %}
+      {% url 'empresa' as empresa_url %}
+      <a class="nav-link {% ifequal request.path home_url %}active{% endifequal %}" href="{{ home_url }}">Home</a>
+      <a class="nav-link {% ifequal request.path empresa_url %}active{% endifequal %}" href="{{ empresa_url }}">Empresa</a>
       <a class="nav-link" href="/">Despesa</a>
       <a class="nav-link" href="/">Sair</a>
     </div>

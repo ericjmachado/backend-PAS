@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>
+    Dados de Empresa criada por Egressos
+  </h2>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">Fundador</th>
+          <th scope="col">Razão Social</th>
+          <th scope="col">CNPJ</th>
+          <th scope="col">Empregados</th>
+          <th scope="col">Capital Social</th>
+          <th scope="col">Segmento</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for empresa in empresas %}
+          <tr>
+            <td>{{ empresa.egresso }}</td>
+            <td>{{ empresa.razao_social }}</td>
+            <td>{{ empresa.cnpj }}</td>
+            <td>{{ empresa.empregados }}</td>
+            <td>{{ empresa.capital }}</td>
+            <td>{{ empresa.segmento }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="offset-md-3 col-md-6">
+      <canvas id="funcionario_grafico" width="200" height="200"></canvas>
+    </div>
+    <script>
+        const funcionario_grafico = document.getElementById('funcionario_grafico').getContext('2d');
+        let index_cores = 0
+        const funcionarios =
+        {{ funcionarios_empresas|safe }}
+        const ctx_funcionario_grafico = new Chart(funcionario_grafico, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(funcionarios),
+                datasets: [{
+                    label: 'Funcionários por empresa',
+                    data: Object.values(funcionarios),
+                    backgroundColor: poolColors(Object.keys(funcionarios).length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function dynamicColors() {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+        }
+
+        function poolColors(a) {
+            const pool = [];
+            for (i = 0; i < a; i++) {
+                pool.push(dynamicColors());
+            }
+            return pool;
+        }
+    </script>
+  </div>
+
+{% endblock %}
+

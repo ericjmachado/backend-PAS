@@ -2,6 +2,7 @@ import base64
 from django.conf import settings
 import requests
 from django.utils import timezone
+from random import randint
 
 
 def generate_base64_token(key, password):

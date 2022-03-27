@@ -1,8 +1,140 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>
-    teste {{ token }}
-    </h2>
+  <h2>
+    Dados Estatísticos de Ingressos
+  </h2>
+  <div class="row">
+    <div class="col-md-6">
+      <canvas id="total_ingressos" width="200" height="200"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="total_ingressos_por_unidade" width="200" height="200"></canvas>
+    </div>
+  </div>
+
+  <hr>
+  <br/>
+
+  <h2>Dados Estatísticos de Egressos</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <canvas id="total_egressos" width="200" height="200"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="total_egressos_por_unidade" width="200" height="200"></canvas>
+    </div>
+  </div>
+  <script>
+      const dados = {{ dados|safe }}
+          let
+      index_cores = 0;
+      const {ingressos_totais, ingressos_por_unidade, egressos_totais, egressos_por_unidade} = dados
+      const ctx_total_ingressos = document.getElementById('total_ingressos').getContext('2d');
+      const ctx_total_egressos = document.getElementById('total_egressos').getContext('2d');
+      const ctx_total_ingressos_por_unidade = document.getElementById('total_ingressos_por_unidade').getContext('2d');
+      const ctx_total_egressos_por_unidade = document.getElementById('total_egressos_por_unidade').getContext('2d');
+
+      const ctx_total_ingressos_chart = new Chart(ctx_total_ingressos, {
+          type: 'bar',
+          data: {
+              labels: Object.keys(ingressos_totais),
+              datasets: [{
+                  label: 'Total de ingressos',
+                  data: Object.values(ingressos_totais),
+                  backgroundColor: generateColors(),
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+      const ctx_total_egressos_chart = new Chart(ctx_total_egressos, {
+          type: 'bar',
+          data: {
+              labels: Object.keys(egressos_totais),
+              datasets: [{
+                  label: 'Total de Egressos',
+                  data: Object.values(egressos_totais),
+                  backgroundColor: generateColors(),
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+      const ctx_total_ingressos_por_unidade_chart = new Chart(ctx_total_ingressos_por_unidade, {
+          type: 'bar',
+          data: {
+              labels: Object.keys(ingressos_totais),
+              datasets: generateDataset(ingressos_por_unidade)
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+
+      const ctx_total_egressos_por_unidade_chart = new Chart(ctx_total_egressos_por_unidade, {
+          type: 'bar',
+          data: {
+              labels: Object.keys(egressos_totais),
+              datasets: generateDataset(egressos_por_unidade)
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+      function generateColors() {
+          const cores = [
+              'rgba(255, 99, 132,  1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgb(108, 25, 30)',
+              'rgb(236, 146, 171)'
+          ]
+          const cor = cores[index_cores]
+          index_cores = (index_cores + 1) % cores.length
+          return cor;
+      }
+
+      function generateDataset(data) {
+          const payload = []
+          Object.keys(data).forEach(key => {
+              payload.push({
+                  label: key,
+                  data: Object.values(data[key]),
+                  backgroundColor: generateColors(),
+                  borderWidth: 1
+              })
+          });
+          return payload;
+      }
+  </script>
+
 {% endblock %}
 

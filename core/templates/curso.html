@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h4 style="margin-bottom: 1rem">
+    Dados de Cursos da UFG
+  </h4>
+  <div class="row">
+    <div class="accordion" id="accordions" style="margin-top: 2rem">
+      <div class="accordion" id="accordionExample">
+        {% for curso in cursos %}
+          <div class="accordion-item">
+            <p class="accordion-header" id="P{{ curso.nome }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#I{{ forloop.counter0 }}"
+                      aria-expanded="true" aria-controls="I{{ forloop.counter0 }}">
+                <b>{{ curso.nome }}</b>
+              </button>
+            </p>
+            <div id="I{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                 aria-labelledby="P{{ curso.nome }}"
+                 data-bs-parent="#accordionExample"
+                 data-index="{{ forloop.counter0 }}">
+              <div class="accordion-body">
+                <p>
+                  Media do curso: <b>{{ curso.media|floatformat:3 }}</b>
+                </p>
+                <p>
+                  Tempo Medio de Formação: <b>{{ curso.tempo_medio_desvinculo }}</b>
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      const dados = {{ cursos|safe }}
+      let ctx_sexo
+      let ctx_cotas
+      let ctx_motivo_desvinculo
+      let ctx_cotas_chart
+      let ctx_motivo_desvinculo_chart
+      let ctx_sexo_chart
+      $(".accordion-collapse").on("show.bs.collapse", (e) => {
+          console.log(e.target)
+        let curso = dados[Number(e.target.getAttribute("data-index"))]
+        let html = `<div class="row" id="tabelas">
+                      <div class="col-md-6 offset-md-3" style="margin-bottom: 1rem">
+                        <canvas id="motivo_desvinculo" width="200" height="200"></canvas>
+                      </div>
+                      <div class="col-md-5 offset-md-1">
+                        <canvas id="sexo" width="200" height="200"></canvas>
+                      </div>
+                      <div class="col-md-5 offset-md-1">
+                        <canvas id="cotas" width="200" height="200"></canvas>
+                      </div>
+                    </div>`
+        $("#tabelas").remove()
+        $(e.target.children[0]).append(html)
+        ctx_sexo = document.getElementById('sexo').getContext('2d');
+        ctx_motivo_desvinculo = document.getElementById('motivo_desvinculo').getContext('2d');
+        ctx_cotas = document.getElementById('cotas').getContext('2d');
+
+        function dynamicColors() {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+        }
+
+        function poolColors(a) {
+            const pool = [];
+            for (i = 0; i < a; i++) {
+                pool.push(dynamicColors());
+            }
+            return pool;
+        }
+        ctx_sexo_chart = new Chart(ctx_sexo, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(curso.sexo),
+                datasets: [{
+                    label: 'Sexo (Em %)',
+                    data: Object.values(curso.sexo),
+                    backgroundColor: poolColors(Object.keys(curso.sexo).length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        ctx_motivo_desvinculo_chart = new Chart(ctx_motivo_desvinculo, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(curso.desvinculo),
+                datasets: [{
+                    label: 'Motivo desvinculo (Em %)',
+                    data: Object.values(curso.desvinculo),
+                    backgroundColor: poolColors(Object.keys(curso.desvinculo).length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        ctx_cotas_chart = new Chart(ctx_cotas, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(curso.cotas),
+                datasets: [{
+                    label: 'Lei de Cotas (Em %)',
+                    data: Object.values(curso.cotas),
+                    backgroundColor: poolColors(Object.keys(curso.cotas).length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+      })
+    });
+  </script>
+{% endblock %}
+

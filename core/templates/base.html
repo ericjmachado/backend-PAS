@@ -13,9 +13,9 @@
           integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
           crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
-    .page-link {
-        cursor: pointer !important;
-    }
+      .page-link {
+          cursor: pointer !important;
+      }
   </style>
 </head>
 <body>
@@ -32,7 +32,10 @@
       {% url 'home' as home_url %}
       {% url 'empresa' as empresa_url %}
       {% url 'projeto' as projeto_url %}
+      {% url 'curso' as curso_url %}
       <a class="nav-link {% ifequal request.path home_url %}active{% endifequal %}" href="{{ home_url }}">Home</a>
+      <a class="nav-link {% ifequal request.path curso_url %}active{% endifequal %}"
+         href="{{ curso_url }}">Cursos</a>
       <a class="nav-link {% ifequal request.path empresa_url %}active{% endifequal %}"
          href="{{ empresa_url }}">Empresas</a>
       <a class="nav-link {% ifequal request.path projeto_url %}active{% endifequal %}"

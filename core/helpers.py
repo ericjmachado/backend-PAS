@@ -2,7 +2,7 @@ import base64
 from django.conf import settings
 import requests
 from django.utils import timezone
-from random import randint
+import math
 
 
 def generate_base64_token(key, password):
@@ -35,3 +35,19 @@ def get_bearer_token_from_updated():
             return settings.BEARER_TOKEN
     else:
         return _default_setup()
+
+
+def humanizar_ano(ano: float):
+    if not math.isnan(ano) and ano:
+        ano_inteiro = int(ano)
+        meses = int((ano - ano_inteiro) * 365 / 30)
+        sufixo = ""
+        if meses != 0:
+            sufixo = f" e {meses} meses"
+        return f"{ano_inteiro} anos{sufixo}"
+    else:
+        return "0 anos"
+
+
+def dict_float_to_percent(data: dict):
+    return {key: value * 100 for key, value in data.items()}

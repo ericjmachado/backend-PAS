@@ -1,6 +1,3 @@
-import time
-from functools import wraps
-
 from django.views.generic import TemplateView
 from django.conf import settings
 import pandas as pd

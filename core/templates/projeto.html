@@ -1,11 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div class="modal fade" id="wordcloudModal" tabindex="-1" aria-labelledby="wordcloudModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="wordcloudModalLabel">Wordcloud</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="wordcloud">
+        </div>
+      </div>
+    </div>
+  </div>
   <h4 style="margin-bottom: 1rem">
     Dados de projetos UFG
   </h4>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <select class="form-select" id="tipo">
         <option selected></option>
         {% for tipo in tipos_projeto %}
@@ -13,13 +25,21 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
       <select class="form-select" id="unidade">
         <option selected></option>
         {% for unidade in unidades_projeto %}
           <option value="{{ unidade }}">{{ unidade }}</option>
         {% endfor %}
       </select>
+    </div>
+    <div class="col-md-4">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#wordcloudModal">
+        Wordcloud de Projetos
+      </button>
+      <button type="button" class="btn btn-secondary limparWordCloud">
+        Limpar Busca Wordcloud
+      </button>
     </div>
     <div class="accordion" id="accordions" style="margin-top: 2rem">
       <div class="accordion" id="accordionExample">
@@ -127,6 +147,11 @@
               tipo_el.val(params.tipo)
           }
 
+          $(".limparWordCloud").on("click", () => {
+              urlSearchParams.delete("busca")
+              window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+          })
+
           limit_el.on('change', e => {
               urlSearchParams.set("limit", e.target.value)
               window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
@@ -145,6 +170,29 @@
               urlSearchParams.set("tipo", e.currentTarget.value)
               window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
           })
+        Highcharts.chart('wordcloud', {
+          plotOptions: {
+            series: {
+              cursor: 'pointer',
+              point: {
+                events: {
+                  click: function(e) {
+                    urlSearchParams.set("busca", this.name)
+                    window.location = `${window.location.href.split("?")[0]}?${urlSearchParams.toString()}`
+                  }
+                }
+              }
+            }
+          },
+          series: [{
+            type: 'wordcloud',
+            data: {{ wordcloud|safe }},
+            name: 'ocorrências'
+          }],
+          title: {
+            text: 'Wordcloud de projetos'
+          }
+        });
       });
   </script>
 {% endblock %}

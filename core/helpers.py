@@ -3,6 +3,7 @@ from django.conf import settings
 import requests
 from django.utils import timezone
 import math
+from wordcloud import WordCloud, STOPWORDS
 
 
 def generate_base64_token(key, password):
@@ -51,3 +52,78 @@ def humanizar_ano(ano: float):
 
 def dict_float_to_percent(data: dict):
     return {key: value * 100 for key, value in data.items()}
+
+
+def get_word_clouds(qs, size=None):
+    if size is None:
+        size = 50
+    texto = ""
+    dados = list(qs.values_list("titulo_projeto", "resumo_projeto"))
+    stop = [
+        "e",
+        "o",
+        "é",
+        "ver",
+        "principal",
+        "essa",
+        "vez",
+        "nas",
+        "mas",
+        "qual",
+        "principal",
+        "ele",
+        "ter",
+        "doença",
+        "pois",
+        "este",
+        "vez",
+        "ver principal",
+        "artigo principal",
+        "já",
+        "aos",
+        "pode",
+        "outro",
+        "artigo",
+        "desse",
+        "alguns",
+        "meio",
+        "entre",
+        "das",
+        "podem",
+        "esse",
+        "seu",
+        "também",
+        "são",
+        "quando",
+        "de",
+        "que",
+        "em",
+        "os",
+        "as",
+        "da",
+        "como",
+        "dos",
+        "ou",
+        "se",
+        "um",
+        "uma",
+        "para",
+        "na",
+        "ao",
+        "mais",
+        "por",
+        "não",
+        "ainda",
+        "muito",
+        "sua",
+        "até",
+        "foram",
+        "sobre",
+        "pelo",
+    ] + list(STOPWORDS)
+    for titulo, resumo in dados:
+        texto = f"{texto} {titulo} {resumo}"
+
+    wordcloud = WordCloud(stopwords=stop, collocations=True)
+    dados = list(wordcloud.process_text(texto).items())[:size]
+    return [{"name": chave, "weight": peso} for chave, peso in dados]
